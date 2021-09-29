@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "lib.C": "cpp",
+        "iostream": "cpp",
+        "new": "cpp",
+        "hydro.C": "cpp",
+        "algorithm": "cpp",
+        "__locale": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}

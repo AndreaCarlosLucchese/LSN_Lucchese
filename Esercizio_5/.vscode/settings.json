@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "lib.C": "cpp",
+        "hydro.C": "cpp"
+    }
+}

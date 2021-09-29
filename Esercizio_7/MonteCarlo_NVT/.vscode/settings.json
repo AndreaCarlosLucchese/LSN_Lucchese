@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "lib.C": "cpp",
+        "iomanip": "cpp",
+        "fstream": "cpp"
+    }
+}
