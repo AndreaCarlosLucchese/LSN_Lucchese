@@ -137,11 +137,11 @@ void SA_Algo::Simluated_Annealing(){ // Algoritmo di Simulated Annealing con ann
         double fit1=getFitness();
 
         for(int j=0; j< 1000; j++){
-        Salesman_Path old_path=path;
-        path.Mutation(m_rand);
-        prob = exp(-(1/appo)*(path.ComputeFit(cities)-old_path.ComputeFit(cities)));
-        if(prob < m_rand.Rannyu())
-            path=old_path;
+        Salesman_Path new_path=path;
+        new_path.Mutation(m_rand);
+        prob = exp(-(1/appo)*(new_path.ComputeFit(cities)-path.ComputeFit(cities)));
+        if(prob > m_rand.Rannyu())
+            path=new_path;
         L1.push_back(path.ComputeFit(cities));
         }
         double fit2=getFitness();

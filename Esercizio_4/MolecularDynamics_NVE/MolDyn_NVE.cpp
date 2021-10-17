@@ -350,8 +350,20 @@ void BlockStat(string filein, string fileout){
     double* error=new double[N]();
     int L=M/N;
     ifstream in;
+    int a=0;
     ofstream out;
     in.open(filein);
+    cout << "Vuoi salvare grafici per equilibrazione premi 1 " << endl;
+    cin >> a;
+    if (a==1){
+      out.open("outputs/"+filein);
+      for(int i=0;i<M;i++){
+        double appo=0;
+        in >> appo;
+        out << appo << endl;
+      }
+      out.close();
+    }
 
     for(int i=0; i < N; i++){
         double appo1=0;

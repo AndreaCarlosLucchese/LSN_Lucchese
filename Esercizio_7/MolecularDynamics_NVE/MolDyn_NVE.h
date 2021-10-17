@@ -30,7 +30,12 @@ const int nbins=100;
 double bin_size;
 double hist_g[nbins];
 double hist_ave[nbins];
-
+double stima_g;
+double err_gdir[100];
+double glob_av[100];
+double glob_av2[100];
+int nblk=1;
+double norm=0;
 // thermodynamical state
 int npart;
 double energy,temp,vol,rho,box,rcut;
@@ -47,7 +52,9 @@ void ConfXYZ(int);
 void Measure(void);
 double Force(int, int);
 double Pbc(double);
-void reset();
+void reset(int );
+void accumulate();
+void Average(int );
 /****************************************************************
 *****************************************************************
     _/    _/  _/_/_/  _/       Numerical Simulation Laboratory

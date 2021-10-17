@@ -33,20 +33,26 @@ int main()
     h=0.02;
   }
   if(metro==1){
-    en.open("energy_graph_m.txt");
-    heat.open("cap_graph_m.txt");
-    chi.open("chi_graph_m.txt");
-    if(magn!=0){
+    if(magn==1){
       mag.open("mag_graph_m.txt");
     }
+    else{
+      en.open("energy_graph_m.txt");
+    heat.open("cap_graph_m.txt");
+    chi.open("chi_graph_m.txt");
+    }
+    
   }
   else{
+    if(magn==1){
+     mag.open("mag_graph_g.txt");
+    }
+    else{
     en.open("energy_graph_g.txt");
     heat.open("cap_graph_g.txt");
     chi.open("chi_graph_g.txt");
-    if(magn!=0){
-      mag.open("mag_graph_g.txt");
     }
+     
   }
   cout << endl;
   for(int k=5; k < 21 ; k++ ){ // faccio il cilo sulla temperatura
@@ -222,7 +228,7 @@ void Measure()
   walker[iu] = u;
   walker[ic] = u*u; // capacità termica
   walker[im] = m; // magnetizzazione
-  walker[ix] = m*m*beta; // suscettività
+  walker[ix] = m*m; // suscettività
 
 }
 
@@ -286,7 +292,7 @@ void Averages(int iblk) //Print results for current block
     Heat << setw(wd) << iblk <<  setw(wd) << stima_c << setw(wd) << glob_av[ic]/(double)iblk << setw(wd) << err_c << endl;
     Heat.close();
 
-    if(h!=0){
+    
       Mag.open("output.mag.0",ios::app);
       stima_m = blk_av[im]/blk_norm/(double)nspin; //Magnetizzazione
       glob_av[im]  += stima_m;
@@ -294,16 +300,19 @@ void Averages(int iblk) //Print results for current block
       err_m=Error(glob_av[im],glob_av2[im],iblk);
       Mag << setw(wd) << iblk <<  setw(wd) << stima_m << setw(wd) << glob_av[im]/(double)iblk << setw(wd) << err_m << endl;
       Mag.close();
+    
+    if(h!=0){
+      stima_x=0;
     }
-
+    else{
     Chi.open("output.chi.0",ios::app);
-    stima_x= blk_av[ix]/blk_norm/(double)nspin; //Sucscettivitàs
+    stima_x= blk_av[ix]/blk_norm/(double)nspin/temp; //Sucscettivitàs
     glob_av[ix]  += stima_x;
     glob_av2[ix] += stima_x*stima_x;
     err_x=Error(glob_av[ix],glob_av2[ix],iblk);
     Chi << setw(wd) << iblk <<  setw(wd) << stima_x << setw(wd) << glob_av[ix]/(double)iblk << setw(wd) << err_x << endl;
     Chi.close();
-
+    }
     
 }
 

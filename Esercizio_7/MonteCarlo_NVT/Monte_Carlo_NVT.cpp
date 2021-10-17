@@ -50,7 +50,6 @@ int main()
   ConfFinal(); //Write final configuration
   en.close();
   p.close();
-  Gave.close();
   return 0;
 }
 
@@ -245,7 +244,7 @@ void Measure()
 
     for (int k=igofr; k<igofr+nbins; ++k){ //calcolo g(r) di ogni ciclo
       if(dr>bin_size*k and dr<=bin_size*(k+1)){
-          walker[k]+=2.*3./((pow(dr+bin_size,3)-pow(dr,3))*(4.*M_PI));
+          walker[k]+=2;
           break;
       }
     }
@@ -326,7 +325,9 @@ void Averages(int iblk) //Print results for current block
     err_press=Error(glob_av[iw],glob_av2[iw],iblk);
 
     for(unsigned int i=igofr; i<nbins+igofr; i++){ // calcolo il g(r) medio 
-        stima_g = (double)blk_av[i]/(blk_norm*npart);
+        r=(i-2)*bin_size;
+        double DV = (4./3.)*M_PI*(pow(r+bin_size,3)-pow(r,3));
+        stima_g = (double)blk_av[i]/(rho*DV*(double)npart*blk_norm);
         glob_av[i] += stima_g;
         glob_av2[i] += stima_g*stima_g;
         err_gdir[i]=Error(glob_av[i], glob_av2[i],iblk);
@@ -337,8 +338,9 @@ void Averages(int iblk) //Print results for current block
     Pres << setw(wd) << iblk <<  setw(wd) << stima_pres << setw(wd) << glob_av[iw]/(double)iblk << setw(wd) << err_press << endl;
     
 if(iblk==nblk){ //stampo su file solo l'ultimo blocco di ogni bin per ottenere la migliore stima per ogni raggio
+    
     for(unsigned int i=igofr; i<nbins+igofr; i++){
-     Gave << setw(wd) << iblk <<  setw(wd) << stima_g << setw(wd) << glob_av[i]/(double)iblk << setw(wd) << err_gdir[i] << endl;
+     Gave << setw(wd) << iblk <<  setw(wd) << r+bin_size*0.5 << setw(wd) << glob_av[i]/(double)(iblk) << setw(wd) << err_gdir[i] << endl;
     }
 }
     cout << "----------------------------" << endl << endl;

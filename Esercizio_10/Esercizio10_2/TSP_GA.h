@@ -36,30 +36,30 @@ class Salesman_Path{
         Salesman_Path(vector<unsigned int>);
         double ComputeFit(City);
         vector<unsigned int>  get_path();
-        void Mutation(Random );
-        void Single_permutation(Random );
-        void Shift(Random );
-        void Inversion(Random );
+        void Mutation(Random rand);
+        void Single_permutation(Random rand);
+        void Shift(Random rand);
+        void Inversion(Random rand);
         bool Check()const;
 };
 
-class SA_Algo{
+
+class Genetic_Algo{
     private:
-        Salesman_Path path;
-        vector <double> L1;
-        double m_T;
+        vector <Salesman_Path> m_population;
+        vector <Salesman_Path> new_population;
         Random m_rand;
         City cities;
     public:
-        SA_Algo(unsigned int,double ,string);
-        Salesman_Path getPath();
-        double getFitness();
-        void Simluated_Annealing(unsigned int);
+        Genetic_Algo(unsigned int , unsigned int ,string);
+        unsigned int Selection();
+        void Evolve();
         City get_City();
-        vector <double> get_L();
-        void ChangePath(vector <unsigned int>);
+        Salesman_Path getBestPath();
+        double getFitness();
+        double getAvFitness();
+        void changePath(Salesman_Path);
 };
-
 
 
 #endif

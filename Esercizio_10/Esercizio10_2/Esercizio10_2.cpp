@@ -3,15 +3,14 @@
 #include <string>
 #include "../../Librerie/random.h"
 #include "../../Librerie/lib.h"
-#include "TSP_SA.h"
+#include "TSP_GA.h"
 #include <mpi.h>
 using namespace std;
  
-
+// mpirun -np 4 ./Esercizio10_2.exe    comando da eseguire
 
 int main (int argc, char *argv[]){
-    int nstep = 2000; //step totali dell'algoritmo
-    int m_step= 1000; //step montecarlo
+    int nstep = 100; //step totali dell'algoritmo
     int size, rank;
     int exchange, exchange2, exchange3;
 
@@ -27,7 +26,7 @@ int main (int argc, char *argv[]){
     Random rand;
     in_rand(rand);
 
-    SA_Algo square_tsp(32,1, "squared");
+    Genetic_Algo square_tsp(400,32, "squared");
     ofstream out;
     out.open("outputs/city_square.dat");
     City cities_square = square_tsp.get_City();
@@ -38,9 +37,9 @@ int main (int argc, char *argv[]){
     double fit1=square_tsp.getFitness();
     for(int istep = 0; istep < nstep; istep++){ 
 
-	        square_tsp.Simluated_Annealing(m_step);
+	        square_tsp.Evolve();
             
-		    vector <unsigned int> bestpath = square_tsp.getPath().get_path(); //scrivo il best path 
+		    vector <unsigned int> bestpath = square_tsp.getBestPath().get_path(); //scrivo il best path 
             unsigned int* appo= &bestpath[0];
 		    exchange = int(rand.Rannyu()*4);
 		if(exchange == 1) {
@@ -73,13 +72,13 @@ int main (int argc, char *argv[]){
 			MPI_Recv(appo, 32, MPI_INTEGER, exchange2, itag, MPI_COMM_WORLD, &stat[2]);
 			}
 
-		square_tsp.ChangePath(bestpath); //sovrascrivo il bestpath scambiato
+		square_tsp.changePath(bestpath); //sovrascrivo il bestpath scambiato
   }
 
 
    MPI_Finalize();
     out.open("outputs/square_new_best_path.dat");
-    Salesman_Path new_best_square=square_tsp.getPath();
+    Salesman_Path new_best_square=square_tsp.getBestPath();
     vector<unsigned int> new_best_path_square = new_best_square.get_path();
     for(int i=0; i<new_best_path_square.size();i++)
         out << new_best_path_square[i] << endl;
@@ -87,11 +86,6 @@ int main (int argc, char *argv[]){
     cout << "L1 migliore per quadrato post algoritmo: " << new_best_square.ComputeFit(cities_square)<< endl;
     cout << endl;
 
-    out.open("outputs/square_step.dat");
-    vector <double> L1 = square_tsp.get_L();
-    for(int i=0; i<L1.size();i++){
-        out << L1[i]<< endl;
-    }
     
     return 0;
 }

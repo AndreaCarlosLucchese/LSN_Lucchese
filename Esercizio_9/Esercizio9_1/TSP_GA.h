@@ -48,7 +48,6 @@ class Genetic_Algo{
     private:
         vector <Salesman_Path> m_population;
         vector <Salesman_Path> new_population;
-        vector<double> fitness;
         Random m_rand;
         City cities;
     public:

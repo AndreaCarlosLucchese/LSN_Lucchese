@@ -29,46 +29,31 @@ int main(){
      Move();           //Move particles with Verlet algorithm
      if(istep%iprint == 0) cout << "Number of time-steps: " << istep << endl;
      if(istep%10 == 0){
-        Measure(); 
-        if(nstep/istep!=10) reset();    //Properties measurement
+        Measure();  //Properties measurement
 //        ConfXYZ(nconf);//Write actual configuration in XYZ format //Commented to avoid "filesystem full"! 
-        nconf += 1;
+        nconf += 1;      
      }
-  }
-  ConfFinal();  
+
+  } 
   cout <<"Block statistics " << endl << endl;
   for(int i=0; i<2;i++){
     BlockStat(in[i],out[i]);    
   }       //Write final configuration to restart
-
-  //Calcolo il g(r) medio
-  ofstream Gave;
-  Gave.open("output_gave.out");
-  double stima_g;
-  double err_gdir[100];
-  double glob_av[100];
-  double glob_av2[100];
-  int nblk=10;
-  for(int j=1;j<=nblk;j++){
-    if(j==1){
-      for(unsigned int i =0; i<nbins; i++){
-        glob_av2[i]=0;
-        glob_av[i]=0;
-      }
-    }
-    for(unsigned int i=0; i<nbins; i++){
-        stima_g = (double)hist_g[i]/(npart*j);
-        glob_av[i] += stima_g;
-        glob_av2[i] += stima_g*stima_g;
-        err_gdir[i]=Error(glob_av[i], glob_av2[i],j);
-    }
-    if(j==nblk){
-    for(unsigned int i=0; i<nbins; i++){
-        Gave << glob_av[i]/((double)nblk) << " " << err_gdir[i] << endl;
-     }
-    }
+  for(int i=0; i<nbins;i++){
+    hist_g[i]=0;
   }
-  Gave.close();
+  for(int iblk=1;iblk<=nblk;iblk++){
+     reset(iblk);
+     cout << "Blocco numero " << iblk << endl;
+      for(int istep=0;istep<nstep/10;istep++){
+      Move();
+      Measure();
+      accumulate();
+    }
+    Average(iblk);
+  }
+    ConfFinal();  
+  //Calcolo il g(r) medio
   return 0;
   
 }
@@ -177,14 +162,15 @@ void Input(void){ //Prepare all stuff for the simulation
 
   ReadConf.close();
 
-  if (appo == 1){
+    if (appo == 1){
       double v2tot = 0;
     for (int i=0; i<npart; ++i){
         vx[i] = (x[i] - xold[i])/delta;
         vy[i] = (y[i] - yold[i])/delta;
         vz[i] = (z[i] - zold[i])/delta;
 
-        v2tot += vx[i]*vx[i] + vy[i]*vy[i] + vz[i]*vz[i]; //trovo la v^2 di ogni particella
+        v2tot += vx[i]*vx[i] + vy[i]*vy[i] + vz[i]*vz[i]; //trovo il v^2 di ogni particella
+      }
       double v2tot_new = 3*temp*npart;
       double cf = v2tot_new / v2tot; //trovo il fattore di correzione
 
@@ -197,7 +183,6 @@ void Input(void){ //Prepare all stuff for the simulation
   } 
    return;
 }
-
 
 void Move(void){ //Move particles with Verlet algorithm
   double xnew, ynew, znew, fx[m_part], fy[m_part], fz[m_part];
@@ -262,6 +247,7 @@ void Measure(){ //Properties measurement
 
   v = 0.0; //reset observables
   t = 0.0;
+  w=0.0;
 //cycle over pairs of particles
  for (int k=0; k<nbins; ++k)  hist_g[k]=0;
   for (int i=0; i<npart-1; ++i){
@@ -274,10 +260,10 @@ void Measure(){ //Properties measurement
      dr = dx*dx + dy*dy + dz*dz;
      dr = sqrt(dr);
     //update of the histogram of g(r)
-
+    cout << dr << endl;
     for (int k=0; k<nbins; ++k){
       if(dr>bin_size*k and dr<=bin_size*(k+1)){
-          hist_g[k]+=2.*3./((pow(dr+bin_size,3)-pow(dr,3))*(4.*M_PI));
+          hist_g[k]+=2;
           break;
       }
     }
@@ -285,16 +271,14 @@ void Measure(){ //Properties measurement
      if(dr < rcut){
        vij = 4.0/pow(dr,12) - 4.0/pow(dr,6);
        wij = 1.0/pow(dr,12) - 0.5/pow(dr,6);
-     }
+     
 //Potential energy
        v += vij;
        w += wij;
       
     }          
   }
-  for (int k=0; k<nbins; ++k){
-      hist_ave[k]=hist_ave[k]+hist_g[k];
-    }
+  }
 //Kinetic energy
   for (int i=0; i<npart; ++i) t += 0.5 * (vx[i]*vx[i] + vy[i]*vy[i] + vz[i]*vz[i]);
    
@@ -310,10 +294,24 @@ void Measure(){ //Properties measurement
     return;
 }
 
-void reset(){
+void accumulate(){
+  for(int i=0; i<nbins;i++){
+    hist_ave[i]=hist_ave[i]+hist_g[i];
+  }
+  norm=norm+1;
+}
+
+void reset(int iblk){
+  if( iblk==1){
+      for(unsigned int i =0; i<nbins; i++){
+        glob_av2[i]=0;
+        glob_av[i]=0;
+      }
+    }
   for(unsigned int i=0;i < nbins; i++){
     hist_ave[i]=0;
   }
+  norm=0;
 }
 
 void ConfFinal(void){ //Write final configuration
@@ -424,6 +422,30 @@ double Error(double sum, double sum2, int iblk)
     if( iblk == 1 ) return 0.0;
     else return sqrt((sum2/(double)iblk - pow(sum/(double)iblk,2))/(double)(iblk-1));
 }
+
+void Average(int iblk){
+
+  ofstream Gave;
+  Gave.open("output_gave.out",ios::app);
+  double r=0;
+  double DV=0;
+
+    for(unsigned int i=0; i<nbins; i++){
+        r=i*bin_size;
+        DV = (4./3.)*M_PI*(pow(r+bin_size,3)-pow(r,3));
+        stima_g = (double)hist_ave[i]/(npart*DV*rho*norm);
+        glob_av[i] += stima_g;
+        glob_av2[i] += stima_g*stima_g;
+        err_gdir[i]=Error(glob_av[i], glob_av2[i],iblk);
+    }
+
+    if( iblk==nblk){
+    for(unsigned int i=0; i<nbins; i++){
+        Gave << glob_av[i]/((double)iblk) << " " << err_gdir[i] << endl;
+     }
+    }
+      Gave.close();
+  }
 
 
 

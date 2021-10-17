@@ -10,6 +10,8 @@ clean :
 	$(CP) config.final config.0
 	$(CP) old.final old.0
 	make
+trash :
+	rm *.o *.out
 esegui:
 	./Monte_Carlo_NVT.exe
 Fcc: config.fcc config.0

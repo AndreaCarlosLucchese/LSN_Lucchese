@@ -148,7 +148,7 @@ void Genetic_Algo::Evolve(){
     for(int i=0; i< m_population.size()/2;i++){  //Crossover
         unsigned int sel1=Selection();
         unsigned int sel2=Selection();
-        if(m_rand.Rannyu()<0.6){
+        if(m_rand.Rannyu()<0.5){
             vector <unsigned int> p1=m_population[sel1].get_path();
             vector <unsigned int> p2=m_population[sel2].get_path();
             unsigned int index=int(m_rand.Rannyu()*p1.size());

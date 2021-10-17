@@ -28,7 +28,7 @@ for(int j=0;j<N;j++){
 
         for (int i=0; i<N ;i++){
 
-         out << RW[i] << " " << RW_error[i] << endl;
+         out << RW[i] << " " << 0.5*RW_error[i]/sqrt(RW[i]) << endl;
 
         }
 
@@ -42,7 +42,7 @@ for(int j=0;j<N;j++){
 
         for (int i=0; i<N ;i++){
 
-         out << RW[i] << " " << RW_error[i] << endl;
+         out << RW[i] << " " << 0.5*RW_error[i]/sqrt(RW[i])<< endl;
 
         }
 

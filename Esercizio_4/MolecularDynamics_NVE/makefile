@@ -6,7 +6,8 @@ main.exe : MolDyn_NVE.o
 main.o : MolDyn_NVE.cpp
 	$(CC) -c MolDyn_NVE.cpp -o MolDyn_NVE.o $(CFLAGS)
 clean :
-	rm *.o  *.out main.exe seed.out
+	rm *.o *.out MolDyn_NVE.exe 
+	make
 Fcc : config.fcc config.0 #Copio la configurazione FCC in quella di partenza
 	$(CP) config.fcc config.0
 Conf: old.final old.0 config.final config.0 # Copio la configurazione Finale in quella di partenza

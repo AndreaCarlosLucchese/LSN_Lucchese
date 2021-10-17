@@ -18,7 +18,7 @@ Fcc: config.fcc config.0 #Copio configurazione FCC
 	$(CP) config.fcc config.0
 Conf:  config.final config.0 #Copio configurazione Finae
 	$(CP) config.final config.0
-Solid: input.solid input.datm # Copio i dati del solido in quelli di input e copio gli output nella relativa cartella
+Solid: input.solid input.dat # Copio i dati del solido in quelli di input e copio gli output nella relativa cartella
 	$(CP) input.solid input.dat	
 	$(CP) corr_energy.txt Solid_result/corr_energy.txt
 	$(CP) corr_pressure.txt Solid_result/corr_pressure.txt
@@ -33,7 +33,6 @@ Liquid: input.liquid input.dat# Copio i dati del liquido in quelli di input e co
 	$(CP) output.pres.0 Liquid_result/output.press.0
 	$(CP) output.epot.0 Liquid_result/output.epot.0
 Gas: input.gas input.dat # Copio i dati del gas in quelli di input e copio gli output nella relativa cartella
-	$(CP) input.liquid input.dat
 	$(CP) input.gas input.dat
 	$(CP) corr_energy.txt Gas_result/corr_energy.txt
 	$(CP) corr_pressure.txt Gas_result/corr_pressure.txt
