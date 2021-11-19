@@ -24,9 +24,32 @@ int main (int argc, char *argv[]){
     else{
         out.open("result_210_unif.txt");
     }
-    Hydro idro(0,0,0,0,p);
+    Hydro idro(-200,-200,-200,2.5,p);
 
-   int M=10000;
+    int Z=1000;
+    vector <double> radius;
+    radius=idro.Equilibration(Z);
+
+    ofstream r;
+    if(p==0){
+        r.open("Equilibration_100.dat");
+
+
+    }
+    else{
+        r.open("Equilibration_210.dat");
+    }
+    for(int i=0; i< Z; i++){
+        r<< radius[i]<< endl;
+    }
+    r.close();
+    radius.clear();
+    int dim=3;
+    double* pos = new double[dim]();
+    pos=idro.get_pos();
+        cout << pos[0] << " " <<pos[1] << " " <<pos[2] << endl;
+    
+    int M=10000;
     int N=100;
     double* x1=new double[N]();
     double* x2=new double[N]();
@@ -40,12 +63,12 @@ int main (int argc, char *argv[]){
     for(int j=0; j < N; j++){
         double sum=0;
         for(int k=0; k < L; k++){
-            idro.reset_start(2,1,0,6.2);
+            idro.reset_start(pos[0],pos[1],pos[2],6.2);
              for(int i=0;i<rep; i++){
-                idro.metropolis_unif();
+                idro.metropolis_unif(i);
                 
                 }
-                sum+=idro.get_radius();
+                sum+=idro.get_radius(rep-1);
         }
         x1[j]=sum/L;
         x2[j]=pow(x1[j],2);
@@ -61,7 +84,7 @@ int main (int argc, char *argv[]){
 
 // Gaussian distribution
 
-
+    
 
      if(p==0){
         out.open("result_100_gauss.txt");
@@ -73,12 +96,12 @@ int main (int argc, char *argv[]){
     for(int j=0; j < N; j++){
         double sum=0;
         for(int k=0; k < L; k++){
-            idro.reset_start(1,1,1,2.5);
+            idro.reset_start(pos[0],pos[1],pos[2],2.5);
              for(int i=0;i<rep; i++){
-                idro.metropolis_gauss();
+                idro.metropolis_gauss(i);
                 
                 }
-                sum+=idro.get_radius();
+                sum+=idro.get_radius(rep-1);
         }
         x1[j]=sum/L;
         x2[j]=pow(x1[j],2);
@@ -90,17 +113,14 @@ int main (int argc, char *argv[]){
         }
 
     out.close();
-
-
+    
    
     
-
     delete [] x1;
     delete [] x2;
     delete [] error;
     delete [] sum_prog;
-
-
+    delete [] pos;
     return 0;
 }
 

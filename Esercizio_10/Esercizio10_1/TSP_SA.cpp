@@ -140,6 +140,7 @@ void SA_Algo::Simluated_Annealing(){ // Algoritmo di Simulated Annealing con ann
         Salesman_Path new_path=path;
         new_path.Mutation(m_rand);
         prob = exp(-(1/appo)*(new_path.ComputeFit(cities)-path.ComputeFit(cities)));
+       // cout << prob << endl;
         if(prob > m_rand.Rannyu())
             path=new_path;
         L1.push_back(path.ComputeFit(cities));

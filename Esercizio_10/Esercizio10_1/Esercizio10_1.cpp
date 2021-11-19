@@ -11,7 +11,7 @@ using namespace std;
 
 int main (int argc, char *argv[]){
     
-    SA_Algo circle_tsp(32,1, "circle");
+    SA_Algo circle_tsp(32,2000, "circle");
     ofstream out;
 
     out.open("outputs/city_circle.dat");
@@ -22,7 +22,7 @@ int main (int argc, char *argv[]){
     out.close();
 
     Salesman_Path best=circle_tsp.getPath();
-
+    cout << exp(-1e+07) << endl;
     out.open("outputs/circle_initial_best_path.dat");
     vector<unsigned int> best_path = best.get_path();
     for(int i=0; i<best_path.size();i++)
@@ -52,7 +52,7 @@ int main (int argc, char *argv[]){
 
     //Square 32 cities 
 
-    SA_Algo square_tsp(32,1, "squared");
+    SA_Algo square_tsp(32,2000, "squared");
     out.open("outputs/city_square.dat");
     City cities_square = square_tsp.get_City();
     vector< array<double,2 > > locations_square=cities_square.get_Cities();

@@ -34,11 +34,11 @@ int main (int argc, char *argv[]){
     for(int i=0; i<locations_square.size();i++)
         out << locations_square [i][0] << " " << locations_square[i][1] << endl;
     out.close();
-    double fit1=square_tsp.getFitness();
+    
     for(int istep = 0; istep < nstep; istep++){ 
-
+        
 	        square_tsp.Evolve();
-            
+
 		    vector <unsigned int> bestpath = square_tsp.getBestPath().get_path(); //scrivo il best path 
             unsigned int* appo= &bestpath[0];
 		    exchange = int(rand.Rannyu()*4);
@@ -73,6 +73,7 @@ int main (int argc, char *argv[]){
 			}
 
 		square_tsp.changePath(bestpath); //sovrascrivo il bestpath scambiato
+
   }
 
 

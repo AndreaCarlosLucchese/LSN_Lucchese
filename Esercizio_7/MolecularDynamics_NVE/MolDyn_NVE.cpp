@@ -11,6 +11,7 @@ _/    _/  _/_/_/  _/_/_/_/ email: Davide.Galli@unimi.it
 #include <iostream>     // cin, cout: Standard Input/Output Streams Library
 #include <fstream>      // Stream class to both read and write from/to files.
 #include <cmath>        // rint, pow
+#include <iomanip>
 #include "MolDyn_NVE.h"
 
 using namespace std;
@@ -25,23 +26,6 @@ int main(){
   cin >> appo;
   Input();             //Inizialization
   int nconf = 1;
-  for(int istep=1; istep <= nstep; ++istep){
-     Move();           //Move particles with Verlet algorithm
-     if(istep%iprint == 0) cout << "Number of time-steps: " << istep << endl;
-     if(istep%10 == 0){
-        Measure();  //Properties measurement
-//        ConfXYZ(nconf);//Write actual configuration in XYZ format //Commented to avoid "filesystem full"! 
-        nconf += 1;      
-     }
-
-  } 
-  cout <<"Block statistics " << endl << endl;
-  for(int i=0; i<2;i++){
-    BlockStat(in[i],out[i]);    
-  }       //Write final configuration to restart
-  for(int i=0; i<nbins;i++){
-    hist_g[i]=0;
-  }
   for(int iblk=1;iblk<=nblk;iblk++){
      reset(iblk);
      cout << "Blocco numero " << iblk << endl;
@@ -97,9 +81,7 @@ void Input(void){ //Prepare all stuff for the simulation
 
 //Prepare array for measurements
   iv = 0; //Potential energy
-  ik = 1; //Kinetic energy
-  ie = 2; //Total energy
-  it = 3; //Temperature
+  iw = 1;
   n_props = 4; //Number of observables
 
 //Read initial configuration
@@ -241,13 +223,9 @@ void Measure(){ //Properties measurement
   double v, t, vij,wij,w;
   double dx, dy, dz, dr;
   ofstream Epot, Pres;
-
-  Epot.open("output_epot.out",ios::app);
-  Pres.open("output_pres.out",ios::app);
-
   v = 0.0; //reset observables
   t = 0.0;
-  w=0.0;
+  w= 0.0;
 //cycle over pairs of particles
  for (int k=0; k<nbins; ++k)  hist_g[k]=0;
   for (int i=0; i<npart-1; ++i){
@@ -260,7 +238,8 @@ void Measure(){ //Properties measurement
      dr = dx*dx + dy*dy + dz*dz;
      dr = sqrt(dr);
     //update of the histogram of g(r)
-    cout << dr << endl;
+
+ 
     for (int k=0; k<nbins; ++k){
       if(dr>bin_size*k and dr<=bin_size*(k+1)){
           hist_g[k]+=2;
@@ -271,7 +250,7 @@ void Measure(){ //Properties measurement
      if(dr < rcut){
        vij = 4.0/pow(dr,12) - 4.0/pow(dr,6);
        wij = 1.0/pow(dr,12) - 0.5/pow(dr,6);
-     
+    //  cout << "calcolo" << endl;
 //Potential energy
        v += vij;
        w += wij;
@@ -280,23 +259,23 @@ void Measure(){ //Properties measurement
   }
   }
 //Kinetic energy
-  for (int i=0; i<npart; ++i) t += 0.5 * (vx[i]*vx[i] + vy[i]*vy[i] + vz[i]*vz[i]);
-   
-    stima_pot = v/(double)npart; //Potential energy per particle
-    stima_pres= (48.0 * w / 3.0)/(double)npart;
+  
+    walker_av[iv] = v;  // /(double)npart; //Potential energy per particle
+    walker_av[iw] = (48.0 * w / 3.0);// /(double)npart;
 
-    Epot << stima_pot  << endl;
-    Pres << stima_pres << endl;
-
-    Epot.close();
-    Pres.close();
-
+  //  Epot << walker_av[iv]  << endl;
+  // Pres << walker_av[iw] << endl;
+ // cout << "EPOT " << walker_av[iv] << endl;
+  //cout << "PRES " << walker_av[iw] << endl;
     return;
 }
 
 void accumulate(){
   for(int i=0; i<nbins;i++){
     hist_ave[i]=hist_ave[i]+hist_g[i];
+  }
+  for(int i=0; i<2; i++){
+    blk_av[i]=blk_av[i]+walker_av[i];
   }
   norm=norm+1;
 }
@@ -310,6 +289,9 @@ void reset(int iblk){
     }
   for(unsigned int i=0;i < nbins; i++){
     hist_ave[i]=0;
+  }
+  for(unsigned int i=0; i<2 ; i++){
+    blk_av[i]=0;
   }
   norm=0;
 }
@@ -424,12 +406,31 @@ double Error(double sum, double sum2, int iblk)
 }
 
 void Average(int iblk){
-
-  ofstream Gave;
+  double err_pot, err_press;
+  ofstream Gave,epot,pres;
+  epot.open("ave_epot.out",ios::app);
+  pres.open("ave_pres.out",ios::app);
   Gave.open("output_gave.out",ios::app);
   double r=0;
   double DV=0;
+  const int wd=12;
 
+
+    stima_pot = blk_av[iv]/norm/(double)npart;  //Potential energy
+    global_m[iv] += stima_pot;
+    global_m2[iv] += stima_pot*stima_pot;
+    err_pot=Error(global_m[iv],global_m2[iv],iblk);
+
+    stima_pres = rho * temp + (blk_av[iw]/norm  +  (double)npart) / vol; //Pressure
+    global_m[iw] += stima_pres;
+    global_m2[iw] += stima_pres*stima_pres;
+    err_press=Error(global_m[iw],global_m2[iw],iblk);
+    
+    //Potential energy per particle
+    epot << setw(wd) << iblk <<  setw(wd) << stima_pot << setw(wd) << global_m[iv]/(double)iblk << setw(wd) << err_pot << endl;
+    //Pressure
+    pres << setw(wd) << iblk <<  setw(wd) << stima_pres << setw(wd) << global_m[iw]/(double)iblk << setw(wd) << err_press << endl;
+    
     for(unsigned int i=0; i<nbins; i++){
         r=i*bin_size;
         DV = (4./3.)*M_PI*(pow(r+bin_size,3)-pow(r,3));

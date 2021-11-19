@@ -10,7 +10,7 @@ _/    _/  _/_/_/  _/_/_/_/ email: Davide.Galli@unimi.it
 //parameters, observables
 const int m_props=4;
 int n_props;
-int iv,ik,it,ie;
+int iv,ik,it,ie,iw;
 int appo2=0;
 int appo=0;
 double stima_pot, stima_kin, stima_etot, stima_temp, stima_pres;
@@ -34,11 +34,18 @@ double stima_g;
 double err_gdir[100];
 double glob_av[100];
 double glob_av2[100];
-int nblk=1;
+int nblk=100;
 double norm=0;
 // thermodynamical state
 int npart;
 double energy,temp,vol,rho,box,rcut;
+
+//average
+double blk_av[2];
+double global_m[2];
+double global_m2[2];
+double walker_av[2];
+
 
 // simulation
 int nstep, iprint, seed;

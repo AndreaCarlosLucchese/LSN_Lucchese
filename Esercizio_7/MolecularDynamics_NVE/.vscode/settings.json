@@ -5,6 +5,7 @@
         "algorithm": "cpp",
         "bitset": "cpp",
         "memory": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "ostream": "cpp"
     }
 }

@@ -10,7 +10,7 @@ int main (int argc, char *argv[]){
 
 //Primo punto valutazione della media    
 
-    int M=100000;
+    int M=200000;
     int N= 100;
     int L= M/N;
     double* ave= new double[N]();

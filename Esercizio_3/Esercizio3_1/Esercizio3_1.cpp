@@ -121,6 +121,5 @@ delete[] sum_prog_P;
 delete[] sum_prog2_C;
 delete[] sum_prog2_P;
 
-
-    return 0;
+return 0;
 }

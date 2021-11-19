@@ -91,7 +91,7 @@ void convergence(Genetic_Algo& tsp, City& cities,string out,string out1 ){ // al
         if(i%100==0 and i!=0){
             fit2=tsp.getBestPath().ComputeFit(cities);
             cout << "Numero di iterazioni :" << i << endl;
-            if(fit1-fit2< 0.00001){
+            if(fit1-fit2< 0.0000001){
                 cout << "Convergenza dopo : " << i <<" iterazioni"<<endl;
                 break;
             }
