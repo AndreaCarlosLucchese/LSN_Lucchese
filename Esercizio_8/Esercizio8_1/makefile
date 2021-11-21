@@ -12,4 +12,5 @@ lib.o : ../../Librerie/lib.C ../../Librerie/lib.h
 Quantum.o : Quantum.cpp Quantum.h
 	$(CC) -c Quantum.cpp -o Quantum.o $(CFLAGS)
 clean :
-	rm *.o *.txt main.exe seed.out
+	rm *.o *.txt Esercizio8_1.exe seed.out
+	make

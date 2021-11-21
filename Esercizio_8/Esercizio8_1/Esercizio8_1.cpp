@@ -8,7 +8,7 @@ using namespace std;
  
 int main (int argc, char *argv[]){
    
-    int M=10000;
+    int M=100000;
     int N=100;
     double* x1=new double[N]();
     double* x2=new double[N]();
