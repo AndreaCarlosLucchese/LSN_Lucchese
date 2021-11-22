@@ -21,7 +21,7 @@ int main (int argc, char *argv[]){
     MPI_Request req, req2;
 
     
-   
+    int nmigr=20;
     int itag=1;
     Random rand;
     in_rand(rand);
@@ -38,7 +38,7 @@ int main (int argc, char *argv[]){
     for(int istep = 0; istep < nstep; istep++){ 
         
 	        square_tsp.Evolve();
-
+            if(istep%nmigr==0){
 		    vector <unsigned int> bestpath = square_tsp.getBestPath().get_path(); //scrivo il best path 
             unsigned int* appo= &bestpath[0];
 		    exchange = int(rand.Rannyu()*4);
@@ -73,7 +73,7 @@ int main (int argc, char *argv[]){
 			}
 
 		square_tsp.changePath(bestpath); //sovrascrivo il bestpath scambiato
-
+        }
   }
 
 

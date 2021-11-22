@@ -17,10 +17,6 @@ int main (int argc, char *argv[]){
     double K=100;
     double r=0.1;
     double sigma=0.25;
-    double d1_0;
-    double d2_0;
-    double N1_0;
-    double N2_0;
     int M=10000;
     int N1=100;
     int L=M/N1;
@@ -46,12 +42,9 @@ for(int i=0;i<N1;i++){
     double appo2=0;
     for(int j=1;j<L;j++){
         S=S_0*exp((r-0.5*pow(sigma,2))*T + sigma*rnd.Gauss(0,T));
-        d1_0=d1(S,T,t,K,r,sigma);
-        d2_0=d2(d1_0,T,t,sigma);
-        N1_0=N(d1_0);
-        N2_0=N(d2_0);
-        appo1 +=C(S,T,t,r,N1_0,N2_0,K);
-        appo2 +=P(S,T,t,r,N1_0,N2_0,K);
+
+        appo1 +=C(S,T,r,K);
+        appo2 +=P(S,T,r,K);
     }
     C_1[i]=appo1/L;
     P_1[i]=appo2/L;
@@ -85,13 +78,9 @@ for(int i=0;i<N1;i++){
                 S = S*exp((r-0.5*pow(sigma,2))*(dt)+ sigma*rnd1.Gauss(0,1)*sqrt(dt));
                 }  
             
-            d1_0=d1(S,T,t,K,r,sigma);
-            d2_0=d2(d1_0,T,t,sigma);
-            N1_0=N(d1_0);
-            N2_0=N(d2_0);
-            appo1 += C(S,T,t,r,N1_0,N2_0,K);
-            appo2 += P(S,T,t,r,N1_0,N2_0,K);
-    }
+            appo1 +=C(S,T,r,K);
+            appo2 +=P(S,T,r,K);
+        }
     C_1[i]=appo1/L;
     P_1[i]=appo2/L;
     C_1_2[i]=pow(C_1[i],2);

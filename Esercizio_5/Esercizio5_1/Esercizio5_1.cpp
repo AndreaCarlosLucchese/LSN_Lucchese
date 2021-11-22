@@ -24,7 +24,7 @@ int main (int argc, char *argv[]){
     else{
         out.open("result_210_unif.txt");
     }
-    Hydro idro(-200,-200,-200,2.5,p);
+    Hydro idro(0,0,0,2.5,p);
 
     int Z=1000;
     vector <double> radius;
@@ -59,16 +59,31 @@ int main (int argc, char *argv[]){
 
     //Uniform Distribution
 
+    double delta=0;
+    double delta_g=0;
+
+    if(p==0){
+        delta=2.8;
+        delta_g=0.7;
+
+    }
+
+    else{
+        delta=6;
+        delta_g=2.2;
+    }
+
 
     for(int j=0; j < N; j++){
         double sum=0;
         for(int k=0; k < L; k++){
-            idro.reset_start(pos[0],pos[1],pos[2],6.2);
+            idro.reset_start(pos[0],pos[1],pos[2],delta);
              for(int i=0;i<rep; i++){
                 idro.metropolis_unif(i);
                 
                 }
                 sum+=idro.get_radius(rep-1);
+                
         }
         x1[j]=sum/L;
         x2[j]=pow(x1[j],2);
@@ -96,7 +111,7 @@ int main (int argc, char *argv[]){
     for(int j=0; j < N; j++){
         double sum=0;
         for(int k=0; k < L; k++){
-            idro.reset_start(pos[0],pos[1],pos[2],2.5);
+            idro.reset_start(pos[0],pos[1],pos[2],delta_g);
              for(int i=0;i<rep; i++){
                 idro.metropolis_gauss(i);
                 
@@ -113,8 +128,7 @@ int main (int argc, char *argv[]){
         }
 
     out.close();
-    
-   
+
     
     delete [] x1;
     delete [] x2;

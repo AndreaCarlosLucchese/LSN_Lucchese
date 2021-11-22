@@ -1,4 +1,5 @@
 #include "lib.h"
+
 using namespace std;
 
 //iniziallizare classe random
@@ -186,13 +187,13 @@ double N(double x){
 return 0.5*(1+erf(x/sqrt(2)));
 }
 
-double C(double S, double T, double t, double r, double N1, double N2, double K){
+double C(double S, double T, double r, double K){
 
-      return S*N1-K*exp(-r*(T-t))*N2;
+      return exp(-r*T)*max(0.,S-K);
 }
 
-double P(double S, double T, double t, double r, double N1, double N2, double K){
-   return S*(N1-1)-K*exp(-r*(T-t))*(N2-1);
+double P(double S, double T, double r,  double K){
+      return exp(-r*T)*max(0.,K-S);
    }
 
 

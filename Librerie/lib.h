@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 #include "random.h"
 
 //dist
@@ -38,9 +39,9 @@ double d2(double d1, double T, double t, double sigma);
 double N(double x);
 
 // Call-option
-double C(double S, double T, double t, double r, double N1, double N2, double K);
+double C(double S, double T,  double r, double K);
 
 //put-option
 
-double P(double S, double T, double t, double r, double N1, double N2, double K);
+double P(double S, double T, double r,  double K);
 
